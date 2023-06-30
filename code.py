@@ -34,7 +34,7 @@ esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
 RED_LED = PWMOut.PWMOut(esp, 25)
 GREEN_LED = PWMOut.PWMOut(esp, 26)
 BLUE_LED = PWMOut.PWMOut(esp, 27)
-status_light = adafruit_rgbled.RGBLED(RED_LED, BLUE_LED, GREEN_LED)
+status_light = adafruit_rgbled.RGBLED(RED_LED, GREEN_LED, BLUE_LED)
 wifi = adafruit_esp32spi_wifimanager.ESPSPI_WiFiManager(esp, secrets, status_light)
 
 if esp.status == adafruit_esp32spi.WL_IDLE_STATUS:
@@ -62,10 +62,12 @@ while now_utc is None:
 rtc.RTC().datetime = now_utc
 
 # SEND iGate Postition
+wifi.pixel_status((100,100,0))
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.settimeout(10)
 socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
 s.connect(socketaddr)
+wifi.pixel_status((0,100,0))
 
 stamp = datetime.now()
 aprs = APRS()
