@@ -31,6 +31,8 @@ esp32_reset = DigitalInOut(board.GP13)
 spi = busio.SPI(board.GP18, board.GP19, board.GP16)
 esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
 
+time.sleep(2)
+
 RED_LED = PWMOut.PWMOut(esp, 25)
 GREEN_LED = PWMOut.PWMOut(esp, 26)
 BLUE_LED = PWMOut.PWMOut(esp, 27)
