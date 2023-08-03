@@ -36,11 +36,6 @@
     #define ESP32_CS    17 // Chip select pin
     #define ESP32_RST   13 // Reset pin
     #define ESP32_GPIO0  12 // GPIO0 pin
-#elif defined RP2040_FEATHER
-    #define ESP32_CS    13 // Chip select pin
-    #define ESP32_RST   12 // Reset pin
-    #define ESP32_GPIO0 10 // GPIO0 pin
-#endif
 
 int main() {
     // init stdio_usb
