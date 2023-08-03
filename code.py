@@ -13,6 +13,7 @@ import asyncio
 import microcontroller
 from adafruit_datetime import datetime
 from APRS import APRS
+import random
 import config
 
 # our version
