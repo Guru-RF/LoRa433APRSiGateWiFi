@@ -97,9 +97,12 @@ async def iGateAnnounce():
             stamp = datetime.now()
             print(f"{stamp}: [{config.call}] iGateStatus: Reconnecting to ARPS {config.aprs_host} {config.aprs_port}")
             s.close()
+            socket.set_interface(esp)
+            requests.set_socket(socket, esp)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(10)
-            s.connect((config.aprs_host, config.aprs_port))
+            socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
+            s.connect(socketaddr)
             rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
             s.send(bytes(rawauthpacket, 'utf-8'))
             s.send(bytes(rawpacket, 'utf-8'))
@@ -118,9 +121,12 @@ async def iGateAnnounce():
             stamp = datetime.now()
             print(f"{stamp}: [{config.call}] iGateStatus: Reconnecting to ARPS {config.aprs_host} {config.aprs_port}")
             s.close()
+            socket.set_interface(esp)
+            requests.set_socket(socket, esp)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(10)
-            s.connect((config.aprs_host, config.aprs_port))
+            socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
+            s.connect(socketaddr)
             rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
             s.send(bytes(rawauthpacket, 'utf-8'))
             s.send(bytes(message, 'utf-8'))
@@ -138,9 +144,12 @@ async def tcpPost(packet):
         stamp = datetime.now()
         print(f"{stamp}: [{config.call}] AprsTCPSend: Reconnecting to ARPS {config.aprs_host} {config.aprs_port}")
         s.close()
+        socket.set_interface(esp)
+        requests.set_socket(socket, esp)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(10)
-        s.connect((config.aprs_host, config.aprs_port))
+        socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
+        s.connect(socketaddr)
         rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
         s.send(bytes(rawauthpacket, 'utf-8'))
         s.send(bytes(rawpacket, 'utf-8'))
