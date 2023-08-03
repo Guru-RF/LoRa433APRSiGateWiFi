@@ -158,7 +158,7 @@ async def tcpPost(packet):
     print(f"{stamp}: [{config.call}] AprsTCPSend: {packet}")
     await asyncio.sleep(0)
 
-async def httpPost(packet,rssi):
+async def httpPost(packet,rssi,snr):
     await asyncio.sleep(0)
     json_data = {
         "call": config.call,
@@ -169,7 +169,8 @@ async def httpPost(packet,rssi):
         "symbol": config.symbol,
         "token": config.token,
         "raw": packet,
-        "rssi": rssi
+        "rssi": rssi,
+        "snr": snr,
     }
 
     try:
@@ -204,11 +205,11 @@ async def loraRunner(loop):
                 try:
                     rawdata = bytes(packet[3:]).decode('utf-8')
                     stamp = datetime.now()
-                    print(f"\r{stamp}: [{config.call}] loraRunner: RSSI:{rfm9x.last_rssi} Data:{rawdata}")
+                    print(f"\r{stamp}: [{config.call}] loraRunner: RSSI:{rfm9x.last_rssi} SNR:{rfm9x.last_snr} Data:{rawdata}")
                     wifi.pixel_status((100,100,0))
                     loop.create_task(tcpPost(rawdata))
                     if config.enable is True:
-                        loop.create_task(httpPost(rawdata,rfm9x.last_rssi))
+                        loop.create_task(httpPost(rawdata,rfm9x.last_rssi,rfm9x.last_snr))
                     wifi.pixel_status((0,100,0))
                 except:
                     print(f"{stamp}: [{config.call}] loraRunner: Lost Packet, unable to decode, skipping")
