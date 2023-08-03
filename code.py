@@ -196,7 +196,8 @@ async def loraRunner(loop):
         await asyncio.sleep(0)
         stamp = datetime.now()
         print(f"{stamp}: [{config.call}] loraRunner: Waiting for lora APRS packet ...\r", end="")
-        packet = rfm9x.receive(with_header=True,timeout=10)
+        timeout = int(config.timeout) + random.randint(a: 1, b: 9)
+        packet = rfm9x.receive(with_header=True,timeout=timeout)
         if packet is not None:
             if packet[:3] == (b'<\xff\x01'):
                 try:

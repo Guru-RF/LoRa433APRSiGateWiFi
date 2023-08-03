@@ -8,6 +8,7 @@ longitude = 4.239546
 altitude = 46 # in meters
 comment = "https://rf.guru LoraAPRSGateway v0.1"
 symbol = "La"
+timeout = 900 # time to wait for an APRS packet
 # http rest stats monitor
 enable = False
 token = "whatever"
