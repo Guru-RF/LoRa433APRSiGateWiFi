@@ -87,8 +87,8 @@ try:
     wifi.pixel_status((0,100,0))
 except:
     stamp = datetime.now()
-    print(f"{stamp}: [{config.call}] Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
-    s.close()
+    print(f"{stamp}: [{config.call}] Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet ! Restarting System !")
+    microcontroller.reset()
 
 
 async def iGateAnnounce():
@@ -115,8 +115,8 @@ async def iGateAnnounce():
                 s.send(bytes(rawpacket, 'utf-8'))
             except:
                 stamp = datetime.now()
-                print(f"{stamp}: [{config.call}] Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
-                s.close()
+                print(f"{stamp}: [{config.call}] Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet ! Restarting system !")
+                microcontroller.reset()
         stamp = datetime.now()
         print(f"{stamp}: [{config.call}] iGateStatus: {rawpacket}", end="")
         stamp = datetime.now()
@@ -144,8 +144,8 @@ async def iGateAnnounce():
                 s.send(bytes(message, 'utf-8'))
             except:
                 stamp = datetime.now()
-                print(f"{stamp}: [{config.call}] iGateStatus: Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
-                s.close()
+                print(f"{stamp}: [{config.call}] iGateStatus: Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet ! Restarting system !")
+                microcontroller.reset()
         
         print(f"{stamp}: [{config.call}] iGatePossition: {message}", end="")
         await asyncio.sleep(15*60)
@@ -172,8 +172,8 @@ async def tcpPost(packet):
             s.send(bytes(rawpacket, 'utf-8'))
         except:
             stamp = datetime.now()
-            print(f"{stamp}: [{config.call}] AprsTCPSend: Reconnecting to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
-            s.close()
+            print(f"{stamp}: [{config.call}] AprsTCPSend: Reconnecting to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet ! Restarting system !")
+            microcontroller.reset()
     stamp = datetime.now()
     print(f"{stamp}: [{config.call}] AprsTCPSend: {packet}")
     await asyncio.sleep(0)
@@ -202,7 +202,7 @@ async def httpPost(packet,rssi,snr):
     except:
         stamp = datetime.now()
         print("{0}: [{1}] AprsRestSend: Lost Packet, unable post {2} to {3}".format(stamp, config.call, packet, config.url))
-        print(f"{stamp}: [{config.call}] AprsRestSend: Restarting gateway...")
+        print(f"{stamp}: [{config.call}] AprsRestSend: Restarting system !")
         microcontroller.reset()
 
 
