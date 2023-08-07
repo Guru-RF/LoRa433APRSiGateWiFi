@@ -70,20 +70,25 @@ rtc.RTC().datetime = now
 wifi.pixel_status((100,100,0))
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.settimeout(10)
-socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
-s.connect(socketaddr)
-stamp = datetime.now()
-aprs = APRS()
-pos = aprs.makePosition(config.latitude, config.longitude, -1, -1, config.symbol)
-altitude = "/A={:06d}".format(int(config.altitude*3.2808399))
-comment = config.comment + altitude
-ts = aprs.makeTimestamp('z',now.tm_mday,now.tm_hour,now.tm_min,now.tm_sec)
-message = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
-s.send(bytes(message, 'utf-8'))
-message = f'{config.call}>APRFGI,TCPIP*:@{ts}{pos}{comment}\n'
-s.send(bytes(message, 'utf-8'))
-print(f"{stamp}: [{config.call}] iGatePossition: {message}", end="")
-wifi.pixel_status((0,100,0))
+try:
+    socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
+    s.connect(socketaddr)
+    stamp = datetime.now()
+    aprs = APRS()
+    pos = aprs.makePosition(config.latitude, config.longitude, -1, -1, config.symbol)
+    altitude = "/A={:06d}".format(int(config.altitude*3.2808399))
+    comment = config.comment + altitude
+    ts = aprs.makeTimestamp('z',now.tm_mday,now.tm_hour,now.tm_min,now.tm_sec)
+    message = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
+    s.send(bytes(message, 'utf-8'))
+    message = f'{config.call}>APRFGI,TCPIP*:@{ts}{pos}{comment}\n'
+    s.send(bytes(message, 'utf-8'))
+    print(f"{stamp}: [{config.call}] iGatePossition: {message}", end="")
+    wifi.pixel_status((0,100,0))
+except:
+    stamp = datetime.now()
+    print(f"{stamp}: [{config.call}] Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
+    s.close()
 
 
 async def iGateAnnounce():
@@ -102,11 +107,16 @@ async def iGateAnnounce():
             requests.set_socket(socket, esp)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(10)
-            socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
-            s.connect(socketaddr)
-            rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
-            s.send(bytes(rawauthpacket, 'utf-8'))
-            s.send(bytes(rawpacket, 'utf-8'))
+            try:
+                socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
+                s.connect(socketaddr)
+                rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
+                s.send(bytes(rawauthpacket, 'utf-8'))
+                s.send(bytes(rawpacket, 'utf-8'))
+            except:
+                stamp = datetime.now()
+                print(f"{stamp}: [{config.call}] Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
+                s.close()
         stamp = datetime.now()
         print(f"{stamp}: [{config.call}] iGateStatus: {rawpacket}", end="")
         stamp = datetime.now()
@@ -126,11 +136,16 @@ async def iGateAnnounce():
             requests.set_socket(socket, esp)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(10)
-            socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
-            s.connect(socketaddr)
-            rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
-            s.send(bytes(rawauthpacket, 'utf-8'))
-            s.send(bytes(message, 'utf-8'))
+            try:
+                socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
+                s.connect(socketaddr)
+                rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
+                s.send(bytes(rawauthpacket, 'utf-8'))
+                s.send(bytes(message, 'utf-8'))
+            except:
+                stamp = datetime.now()
+                print(f"{stamp}: [{config.call}] iGateStatus: Connect to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
+                s.close()
         
         print(f"{stamp}: [{config.call}] iGatePossition: {message}", end="")
         await asyncio.sleep(15*60)
@@ -149,11 +164,16 @@ async def tcpPost(packet):
         requests.set_socket(socket, esp)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(10)
-        socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
-        s.connect(socketaddr)
-        rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
-        s.send(bytes(rawauthpacket, 'utf-8'))
-        s.send(bytes(rawpacket, 'utf-8'))
+        try:
+            socketaddr = socket.getaddrinfo(config.aprs_host, config.aprs_port)[0][4]
+            s.connect(socketaddr)
+            rawauthpacket = f'user {config.call} pass {config.passcode} vers {VERSION}\n'
+            s.send(bytes(rawauthpacket, 'utf-8'))
+            s.send(bytes(rawpacket, 'utf-8'))
+        except:
+            stamp = datetime.now()
+            print(f"{stamp}: [{config.call}] AprsTCPSend: Reconnecting to ARPS {config.aprs_host} {config.aprs_port} Failed ! Lost Packet !")
+            s.close()
     stamp = datetime.now()
     print(f"{stamp}: [{config.call}] AprsTCPSend: {packet}")
     await asyncio.sleep(0)
