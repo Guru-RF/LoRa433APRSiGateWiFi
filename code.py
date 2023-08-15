@@ -15,6 +15,10 @@ from adafruit_datetime import datetime
 from APRS import APRS
 import random
 import config
+import microcontroller
+
+# reset to normal mode
+microcontroller.on_next_reset(microcontroller.RunMode.NORMAL)
 
 # our version
 VERSION = "RF.Guru_APRSGateway 0.1" 
